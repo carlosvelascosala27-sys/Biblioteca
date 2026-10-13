@@ -45,6 +45,9 @@ fun PantallaRegistro(
     var clave by rememberSaveable { mutableStateOf("") }
     var aceptoNormas by rememberSaveable { mutableStateOf(false) }
 
+    // AMPLIACIÓN: Variable para controlar si se ve la contraseña
+    var verClave by rememberSaveable { mutableStateOf(false) }
+
     Box(modifier = modifier.fillMaxSize()) {
 
         // 1. Imagen de fondo
@@ -125,7 +128,7 @@ fun PantallaRegistro(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    // 3. Campo Contraseña
+                    // 3. Campo Contraseña (AMPLIADO)
                     OutlinedTextField(
                         value = clave,
                         onValueChange = { clave = it },
@@ -133,7 +136,15 @@ fun PantallaRegistro(
                         leadingIcon = {
                             Icon(Icons.Default.Lock, contentDescription = null)
                         },
-                        visualTransformation = PasswordVisualTransformation(),
+                        // Icono final para mostrar/ocultar
+                        trailingIcon = {
+                            IconButton(onClick = { verClave = !verClave }) {
+                                val icono = if (verClave) Icons.Default.Lock else Icons.Default.Person
+                                Icon(icono, contentDescription = "Mostrar/Ocultar")
+                            }
+                        },
+                        // Cambiamos el modo según el estado de verClave
+                        visualTransformation = if (verClave) androidx.compose.ui.text.input.VisualTransformation.None else PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Password
                         ),
@@ -141,7 +152,7 @@ fun PantallaRegistro(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    // CASILLA DE NORMAS (Añadido)
+                    // CASILLA DE NORMAS
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
@@ -153,7 +164,7 @@ fun PantallaRegistro(
                         Text("Acepto las normas de la biblioteca")
                     }
 
-                    // 4. Botón Crear Cuenta (Actualizado con aceptoNormas)
+                    // 4. Botón Crear Cuenta
                     Button(
                         onClick = { onCrear(nombre, correo, clave) },
                         enabled = nombre.isNotBlank() && correo.isNotBlank() && clave.isNotBlank() && aceptoNormas,
@@ -169,7 +180,7 @@ fun PantallaRegistro(
                 }
             }
 
-            // TEXTO INFERIOR (Añadido)
+            // TEXTO INFERIOR
             Row(
                 modifier = Modifier.padding(top = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
